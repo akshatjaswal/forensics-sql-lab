@@ -5,7 +5,7 @@
 -- ============================================================
 -- Test 1: Entries and value per account
 -- Purpose: profile where the money sits
--- What stands out: The consulting fees holds 35% (7) of entries amounting to Rs. 9,85,850 out of which 3 entries are just below the 2,00,000 approval limit.
+-- What stands out: The consulting fees holds 35% (7) of entries amounting to Rs. 9,85,850 out of which 2 entries are just below the 2,00,000 approval limit & 1 at exactly at the limit.
 -- ============================================================
 
    SELECT a.account_name, COUNT(j.amount), SUM(j.amount) 
@@ -18,7 +18,7 @@
 -- ============================================================
 -- Test 2: Entries and value per preparer
 -- Purpose: spot concentration of postings by one user
--- What stands out: Ravi has posted 7 entries covering 48% of the total amount (Rs. 15,74,590.20) including duplicate pairs, two of the near- limit entries and one posted on weekend.
+-- What stands out: Ravi has posted 7 entries covering 48% of the total amount (Rs. 15,74,590.20) including duplicate pair, two of the near- limit entries and one posted on weekend.
 -- ============================================================
 
    SELECT u.user_name, COUNT(j.amount), SUM(j.amount) 
@@ -31,7 +31,7 @@
 -- ============================================================
 -- Test 3: Self-approved entries (preparer = approver)
 -- Red flag: maker-checker control bypassed
--- Legitimate causes: a recorder emergency situtaion, abesnce of approver 
+-- Legitimate causes: an emergency situation to record entries, absence of approver, temporary rights granted
 -- Evidence to gather: check control mechanisms, check the logs if checker has been changed
 -- ============================================================
 
@@ -45,8 +45,8 @@
 -- ============================================================
 -- Test 4: Weekend postings
 -- Red flag: entries posted outside normal working days
--- Legitimate causes: half- year end closure postings, 
--- Evidence to gather: log reocrds, attendance records to ascertain who were present, access right logs
+-- Legitimate causes: half-year end closure postings, 
+-- Evidence to gather: log records, attendance records to ascertain who were present, access right logs
 -- ============================================================
 
    SELECT j.je_id, j.posting_date, j.amount, u.user_name
@@ -59,7 +59,7 @@
 -- ============================================================
 -- Test 5: Possible duplicate postings
 -- Red flag: same account, amount and date posted more than once
--- Legitimate causes: two different invoices raised, splitting of payements, fixed recurring charges
+-- Legitimate causes: two different invoices raised, splitting of payments, fixed recurring charges
 -- Evidence to gather: bank ledgers, payment proofs
 -- ============================================================
 
