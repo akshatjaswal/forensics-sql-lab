@@ -1,4 +1,4 @@
-# Fraud SQL Lab
+# Forensics SQL Lab
 
 A PostgreSQL project to build journal-entry fraud tests, written from a
 forensic accounting perspective.
