@@ -5,7 +5,7 @@
 -- ============================================================
 -- Test 1: Entries and value per account
 -- Purpose: profile where the money sits
--- What stands out: The consulting fees holds 35% (7) of entries amounting to Rs. 9,85,850 out of which 2 entries are just below the 2,00,000 approval limit & 1 at exactly at the limit.
+-- What stands out: The consulting fees holds 35% (7) of entries amounting to Rs. 9,85,850 out of which 2 entries are just below the 2,00,000 approval limit & 1 exactly at the limit.
 -- ============================================================
 
    SELECT a.account_name, COUNT(j.amount), SUM(j.amount) 
@@ -18,7 +18,7 @@
 -- ============================================================
 -- Test 2: Entries and value per preparer
 -- Purpose: spot concentration of postings by one user
--- What stands out: Ravi has posted 7 entries covering 48% of the total amount (Rs. 15,74,590.20) including duplicate pair, two of the near- limit entries and one posted on weekend.
+-- What stands out: Ravi has posted 7 entries covering 48% of the total amount (Rs. 15,74,590.20) including a duplicate pair, two of the near limit entries and one posted on weekend.
 -- ============================================================
 
    SELECT u.user_name, COUNT(j.amount), SUM(j.amount) 
@@ -45,7 +45,7 @@
 -- ============================================================
 -- Test 4: Weekend postings
 -- Red flag: entries posted outside normal working days
--- Legitimate causes: half-year end closure postings, 
+-- Legitimate causes: half-year end closure postings, urgent need to post per approval
 -- Evidence to gather: log records, attendance records to ascertain who were present, access right logs
 -- ============================================================
 
@@ -75,17 +75,20 @@
 
 
 -- ============================================================
--- Test 6: Approved within 5% range approval limit
+-- Test 6: Entries within 5% below the approver’s limit
 -- Red flag: amounts just under an approver’s limit, which may avoid escalation
+-- Band: 95% to 100% of approver's limit (inclusive of exactly 100%)
+-- Reason of 5%: Wide enough to catch entries near to approval limits, although a 10% range can flag more entries which can be also be verified for a broader lookout
+-- If we widen it up to 10% it includes entry 15 which is 92% of the Controller's Limit (Limit: 10,00,000)
 -- Legitimate causes: fixed-price contracts, quotes that happen to land near the limit
 -- Evidence to gather: engagement letters, vendor and quote history, whether the consulting amounts were negotiated or revised, and whether the Controller ever saw them
 -- What stands out: entries 3 and 13 share a preparer and approver, entry 18 is self-approved, and all three sit in Consulting Fees.
 -- ============================================================
 
-   SELECT j.je_id, j.posting_date, j.amount, ROUND(j.amount/al.limit_amount * 100, 2)  pct_of_limit, prep.user_name AS prepared_by, appr.user_name AS approved_by, al.limit_amount
+   SELECT j.je_id, j.posting_date, j.amount, ROUND(j.amount/al.limit_amount * 100, 2) AS pct_of_limit, prep.user_name AS prepared_by, appr.user_name AS approved_by, al.limit_amount
        FROM journal_entries j
        JOIN users prep ON j.prepared_by = prep.user_id
        JOIN users appr ON j.approved_by = appr.user_id
        JOIN approval_limits al ON appr.role = al.role
-       WHERE j.amount BETWEEN al.limit_amount * 0.95 AND al.limit_amount * 1
+       WHERE j.amount BETWEEN al.limit_amount * 0.95 AND al.limit_amount
        ORDER BY j.je_id;
