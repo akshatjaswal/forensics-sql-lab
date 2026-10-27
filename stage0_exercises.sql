@@ -72,3 +72,20 @@
    GROUP BY j.account_id, j.amount, j.posting_date
    HAVING COUNT(*) > 1
    ORDER BY occurrences DESC, j.posting_date;
+
+
+-- ============================================================
+-- Test 6: Approved within 5% range approval limit
+-- Red flag: amounts just under an approver’s limit, which may avoid escalation
+-- Legitimate causes: fixed-price contracts, quotes that happen to land near the limit
+-- Evidence to gather: engagement letters, vendor and quote history, whether the consulting amounts were negotiated or revised, and whether the Controller ever saw them
+-- What stands out: entries 3 and 13 share a preparer and approver, entry 18 is self-approved, and all three sit in Consulting Fees.
+-- ============================================================
+
+   SELECT j.je_id, j.posting_date, j.amount, ROUND(j.amount/al.limit_amount * 100, 2)  pct_of_limit, prep.user_name AS prepared_by, appr.user_name AS approved_by, al.limit_amount
+       FROM journal_entries j
+       JOIN users prep ON j.prepared_by = prep.user_id
+       JOIN users appr ON j.approved_by = appr.user_id
+       JOIN approval_limits al ON appr.role = al.role
+       WHERE j.amount BETWEEN al.limit_amount * 0.95 AND al.limit_amount * 1
+       ORDER BY j.je_id;
