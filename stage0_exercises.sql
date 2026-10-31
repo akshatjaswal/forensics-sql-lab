@@ -78,8 +78,9 @@
 -- Test 6: Entries within 5% below the approver’s limit
 -- Red flag: amounts just under an approver’s limit, which may avoid escalation
 -- Band: 95% to 100% of approver's limit (inclusive of exactly 100%)
--- Reason of 5%: Wide enough to catch entries near to approval limits, although a 10% range can flag more entries which can be also be verified for a broader lookout
+-- Reason for 5%: Catch entries near to approval limits having a high impact and 5% keeps the band to entries that look like they were sized to fit under the limit, although a 10% range can flag more entries which can be also be verified for a broader lookout
 -- If we widen it up to 10% it includes entry 15 which is 92% of the Controller's Limit (Limit: 10,00,000)
+-- Reason for 100%: The limit is the max an approver can approve, therefore it becomes essential to consider transaction at exact approval limit as it may raise red flag
 -- Legitimate causes: fixed-price contracts, quotes that happen to land near the limit
 -- Evidence to gather: engagement letters, vendor and quote history, whether the consulting amounts were negotiated or revised, and whether the Controller ever saw them
 -- What stands out: entries 3 and 13 share a preparer and approver, entry 18 is self-approved, and all three sit in Consulting Fees.
